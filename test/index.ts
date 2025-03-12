@@ -1,5 +1,6 @@
 import { encodeImage, isRemoteFile } from "../src/index";
 import Together from "together-ai";
+import fs from 'fs';  // Import the fs module to write files
 
 async function getMarkDown({
   together,
@@ -47,30 +48,24 @@ async function getMarkDown({
     });
 
     console.log("✅ API response received!");
-    return output.choices[0]?.message?.content || "⚠️ No response content!";
+
+    // Parse the output and write it to a JSON file
+    const jsonResult = output.choices[0]?.message?.content || "⚠️ No response content!";
+    
+    // Try to parse it into JSON and save it
+    try {
+      const parsedResult = JSON.parse(jsonResult);
+
+      const fileName = 'id_card_details.json';
+      fs.writeFileSync(fileName, JSON.stringify(parsedResult, null, 2));
+
+      console.log(`✅ JSON data saved to ${fileName}`);
+    } catch (parseError) {
+      console.error("❌ Error parsing the response:", parseError);
+    }
+
+    return jsonResult;
   } catch (error) {
     console.error("❌ Error calling Together AI:", error);
   }
 }
-
-// Example usage
-async function runOCR() {
-  console.log("🚀 Running OCR process...");
-  const together = new Together({
-    apiKey: process.env.TOGETHER_API_KEY,
-  });
-
-  const filePath = "./test/amine.jpeg"; // Replace with actual path
-  console.log(`📂 Processing file: ${filePath}`);
-
-  const response = await getMarkDown({
-    together,
-    visionLLM: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-    filePath,
-  });
-
-  console.log("📝 OCR Result:", response);
-}
-
-// Run the function
-runOCR();
