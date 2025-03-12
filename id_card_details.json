@@ -1,0 +1,10 @@
+{
+  "full_name": "Doe",
+  "id_number": "1024567890",
+  "date_of_birth": "1980-01-01",
+  "nationality": "American",
+  "expiration_date": "2030-01-01",
+  "address": "Data not provided",
+  "phone_number": "Data not provided",
+  "email": "Data not provided"
+}
